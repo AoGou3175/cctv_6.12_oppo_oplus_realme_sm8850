@@ -1,0 +1,5 @@
+.github/workflows/*.yml text eol=lf
+local/*.sh text eol=lf
+tests/*.py text eol=lf
+AGENTS.md text eol=lf
+versions/** -text -whitespace
