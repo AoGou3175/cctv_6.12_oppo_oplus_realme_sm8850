@@ -134,7 +134,12 @@ echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
 # ===== 拉取 KSU 并设置版本号 =====
 if [[ $KSU_BRANCH == [yYrR] ]]; then
   echo ">>> 拉取 BakaSU 并设置版本（由于SukiSU长期未维护无法正常编译，且BakaSU兼容sukisu管理器，故SukiSU源码仓库已重定向为bakasu）..."
-  curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main
+  KSU_REF=main
+  if [[ "$APPLY_SUSFS" == [yY] ]]; then
+    KSU_REF="5b76b884c75f729a220bb317aa4a4fc78f0e0e9c"
+    echo ">>> 启用 susfs，使用已固定的 BakaSU 提交：$KSU_REF"
+  fi
+  curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s "$KSU_REF"
   echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@cctv18"' >> ./common/arch/arm64/configs/gki_defconfig
 elif [[ "$KSU_BRANCH" == "n" || "$KSU_BRANCH" == "N" ]]; then
   echo ">>> 拉取 KernelSU Next 并设置版本..."
