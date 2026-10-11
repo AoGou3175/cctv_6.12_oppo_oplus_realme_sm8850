@@ -93,3 +93,14 @@
 - `D:/Codex/构建GKI/CCTV6.12/versions/test_bakasu_policy-20261011-201601-遵循最新BakaSU.py`
 - `D:/Codex/构建GKI/CCTV6.12/versions/AGENTS-20261011-201601-遵循最新BakaSU.md`
 
+## 2026-10-11 20:51:54 GitHub 上传验收
+
+- 用户明确要求上传 GitHub，并明确允许此次继续使用现有 Public fork；保持仓库可见性和 fork 关系不变，未创建新仓库、分支或 PR。
+- 上传目标：`AoGou3175/cctv_6.12_oppo_oplus_realme_sm8850` 的 `main`。
+- 代码与快照提交：`441ba38cb7c01dadeeaf63081e983b257944e8bf`，八个工作流、七个 local 构建脚本、AGENTS.md、两项测试脚本、CHANGELOG 和 18 份结果快照共 37 个文件已成功推送。
+- 上传前验证：fetch 后远程 main 与本地基线一致，无需合并；9 项行为测试全部通过，静态检查、actionlint、Release/七个 local 脚本 bash -n、暂存 git diff --check、18 份快照哈希检查通过；当前文件及 main 历史敏感信息模式扫描未发现匹配项。
+- 远程验收：git ls-remote 的 main 提交与本地一致；通过 GitHub API 回读八个工作流与 AGENTS.md，内容 SHA-256 与本地完全一致。
+- GitHub 备份状态：本次代码和 18 份快照已上传；本条验收记录随追加文档提交同步备份。没有创建新的快照或覆盖既有快照。
+- 构建边界：按本次上传请求没有启动新的 Actions，现有最后一次成功运行 `38135620746` 仍对应此前旧提交/开启 SUSFS 的构建，不能作为本次 latest main/关闭 SUSFS 的真实编译证据。最新工作流网页入口已更新为默认关闭 SUSFS。
+
+
