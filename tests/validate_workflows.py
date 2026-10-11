@@ -14,6 +14,7 @@ parent = yaml.load(parent_text, Loader=yaml.BaseLoader)
 dispatch = parent['on']['workflow_dispatch']['inputs']
 assert dispatch['ksu_type']['default'] == 'bakasu'
 assert dispatch['kpm_enable']['default'] == 'true'
+assert dispatch['susfs_enable']['default'] == 'false'
 jobs = parent['jobs']
 builds = {name: job for name, job in jobs.items() if name.startswith('build_')}
 assert set(builds) == {f'build_{version}' for version in versions}
@@ -33,8 +34,7 @@ for version in versions:
     assert 'github.event.inputs.' not in text
     assert 'inputs.KERNEL_SUFFIX' not in text
     assert child['env']['SUB_VERSION'] == version
-    assert child['env']['BAKASU_SUSFS_REF'] == '5b76b884c75f729a220bb317aa4a4fc78f0e0e9c'
-    assert 'bash -s "$KSU_REF"' in text
+    assert child['on']['workflow_dispatch']['inputs']['susfs_enable']['default'] == 'false'
     assert 'git rev-list --count HEAD' in text
     assert child['on']['workflow_dispatch']['inputs']['ksu_type']['default'] == 'bakasu'
     call = child['on']['workflow_call']

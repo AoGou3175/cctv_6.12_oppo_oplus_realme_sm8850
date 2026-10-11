@@ -6,7 +6,6 @@ name: build-test_6.12_kpm
 
 env:
   TZ: Asia/Shanghai
-  BAKASU_SUSFS_REF: 5b76b884c75f729a220bb317aa4a4fc78f0e0e9c
 
 on:
   workflow_dispatch:
@@ -23,10 +22,10 @@ on:
           - 'ksu'
           - 'none'
       susfs_enable:
-        description: '是否开启 susfs'
+        description: '是否开启 susfs（最新 BakaSU 暂不支持，请保持关闭；不回退旧源码）'
         required: true
         type: boolean
-        default: true
+        default: false
       kpm_enable:
         description: '是否开启 KPM'
         required: true
@@ -337,7 +336,7 @@ jobs:
           - 编译时间：${TIME_FORM}
           - 机型：欧加真骁龙 8E Gen5、天玑 9500 及 GKI 通用 6.12.X 内核
           - KSU分支：${KSU_TYPENAME}
-          - BakaSU/SukiSU 源码选择：启用 susfs 时使用兼容提交 ${BAKASU_SUSFS_REF}；关闭 susfs 时使用最新 main（上游当前暂时禁止最新 BakaSU 与 susfs 联合构建）
+          - BakaSU/SukiSU 源码选择：使用最新 main，不回退旧提交；遵守上游 SUSFS 兼容检查，默认关闭 SUSFS
           - susfs支持：${SUSFS_ENABLE}
           - KPM支持：${KPM_ENABLE}
           - LZ4支持：${LZ4_ENABLE}

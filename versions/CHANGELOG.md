@@ -56,3 +56,40 @@
 - AGENTS.md：已更新，记录经真实构建验证的七版本规则、BakaSU/susfs 兼容固定和管理器资产核验要求。
 - GitHub 备份：工作流和脚本修正已上传 main；本记录、项目规则、测试及全部历史快照随最终备份提交上传同一指定仓库。构建二进制通过 Release 保存，不提交进 Git。
 - 验证边界：已验证编译、KPM 修补、ZIP 和 Release 完整性；未对任何手机执行刷写。
+
+## 2026-10-11 20:16:01 遵循最新 BakaSU 规则
+
+- 用户要求：按照最新 BakaSU 规则构建，不再用旧提交保留 SUSFS。
+- 上游核对：当前 main 为 `59afa46b325126b12a48234063cd0c2a6b735b57`，仍包含 `$(error Please wait susfs update.)`。暂停原因是 SUSFS 尚未适配最新 KernelSU 的 SELinux 隐藏处理。
+- 修改内容：八个 Actions 工作流默认关闭 SUSFS；七个 fastbuild 和七个 local 脚本统一拉取 BakaSU main，移除旧提交固定。手动开启 SUSFS 且源码仍含上游暂停条件时明确报错退出；不会静默关闭用户选项，也不会移除上游检查。sukisu 选项沿用现有 BakaSU 重定向并遵守相同限制。
+- 保留内容：七版本与机型/源码映射、父子输入和输出、批量 Release、独立 ZIP 名称、KPM 及其他构建功能；未改动既有成品和已发布 Release。
+- 影响文件：根目录父工作流副本、`.github/workflows/` 下八个工作流、`local/` 下七个构建脚本、两个测试脚本和本项目 `AGENTS.md`；同时更新已有仓库副本，未创建分支或工作树。
+- 目录例外：GitHub Actions 要求 `.github/workflows/` 位于仓库根目录，本地增加完整部署副本；保留已有根目录父工作流，两份哈希一致。
+- 测试：先运行行为测试，旧策略按预期出现 50 个失败（旧提交回退、SUSFS 默认开启、未拒绝暂停组合）；修改后 9 项测试覆盖 64 个配置/脚本场景全部通过。测试执行真实配置片段，仅替换外部下载与提交计数，覆盖 main、暂停拒绝、sukisu 别名及模拟上游解除暂停。
+- 其他验证：七版本/15 参数/14 唯一 ZIP 模板静态检查、actionlint、父 Release 脚本与七个 Shell 的 bash -n、git diff --check 均通过；18 份快照 SHA-256 与对应结果文件一致。
+- 坑点：Windows PATH 中的 System32 bash 指向 WSL，会使脚本行为测试使用错误环境；测试改用 Git Bash。未改动系统设置。
+- AGENTS.md：按用户此次明确要求替换旧提交兼容固定规则，记录遵守上游暂停、禁止隐式回退及 Git Bash 验证要求；外层 AGENTS.md 未修改。
+- GitHub 备份状态：本次修改和快照尚未上传 GitHub；未 git add、commit、push，也未启动新的 Actions。远程现有成功运行和 Release 仍是旧固定提交、带 SUSFS 的成品。
+- 验证边界：本次仅验证工作流和策略行为，没有验证最新 main/no-SUSFS 的真实内核编译或手机刷写。
+
+本次结果快照完整路径（18 份）：
+
+- `D:/Codex/构建GKI/CCTV6.12/versions/build-test_6.12_kpm-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.23-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.23_gki-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.23_mtk-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.38-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.58-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.58_mtk-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/fastbuild_6.12.69_gki-20261011-201601-遵循最新BakaSU.yml`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.23-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.23_gki-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.23_mtk-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.38-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.58-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.58_mtk-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/builder_6.12.69_gki-20261011-201601-遵循最新BakaSU.sh`
+- `D:/Codex/构建GKI/CCTV6.12/versions/validate_workflows-20261011-201601-遵循最新BakaSU.py`
+- `D:/Codex/构建GKI/CCTV6.12/versions/test_bakasu_policy-20261011-201601-遵循最新BakaSU.py`
+- `D:/Codex/构建GKI/CCTV6.12/versions/AGENTS-20261011-201601-遵循最新BakaSU.md`
+

@@ -11,8 +11,8 @@ echo ">>> 读取用户配置..."
 MANIFEST=${MANIFEST:-oppo+oplus+realme}
 read -p "请输入自定义内核后缀（默认：android16-5-ge7f2a9832757-ab13799791-4k）: " CUSTOM_SUFFIX
 CUSTOM_SUFFIX=${CUSTOM_SUFFIX:-android16-5-ge7f2a9832757-ab13799791-4k}
-read -p "是否启用susfs？(y/n，默认：y): " APPLY_SUSFS
-APPLY_SUSFS=${APPLY_SUSFS:-y}
+read -p "是否启用susfs？(y/n，默认：n；最新BakaSU上游暂时禁止联合构建): " APPLY_SUSFS
+APPLY_SUSFS=${APPLY_SUSFS:-n}
 read -p "是否启用 KPM？(y-启用 KpatchNext独立kpm实现, n-关闭kpm，默认：n): " USE_PATCH_LINUX
 USE_PATCH_LINUX=${USE_PATCH_LINUX:-n}
 read -p "KSU分支版本(r=BakaSU, y=SukiSU Ultra, n=KernelSU Next, k=KSU, l=lkm模式(无内置KSU), 默认：r): " KSU_BRANCH
@@ -134,12 +134,12 @@ echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
 # ===== 拉取 KSU 并设置版本号 =====
 if [[ $KSU_BRANCH == [yYrR] ]]; then
   echo ">>> 拉取 BakaSU 并设置版本（由于SukiSU长期未维护无法正常编译，且BakaSU兼容sukisu管理器，故SukiSU源码仓库已重定向为bakasu）..."
-  KSU_REF=main
-  if [[ "$APPLY_SUSFS" == [yY] ]]; then
-    KSU_REF="5b76b884c75f729a220bb317aa4a4fc78f0e0e9c"
-    echo ">>> 启用 susfs，使用已固定的 BakaSU 提交：$KSU_REF"
+  curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s main
+  if [[ "$APPLY_SUSFS" == [yY] && -f ./KernelSU/kernel/tools/susfs_compat.mk ]] &&
+     grep -Fq '$(error Please wait susfs update.)' ./KernelSU/kernel/tools/susfs_compat.mk; then
+    echo "错误：最新 BakaSU 暂停 SUSFS 联合构建，请关闭 SUSFS；不回退旧源码，也不删除上游检查。"
+    exit 1
   fi
-  curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s "$KSU_REF"
   echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@cctv18"' >> ./common/arch/arm64/configs/gki_defconfig
 elif [[ "$KSU_BRANCH" == "n" || "$KSU_BRANCH" == "N" ]]; then
   echo ">>> 拉取 KernelSU Next 并设置版本..."
